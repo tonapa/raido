@@ -5,6 +5,8 @@ import java.io.*;
 import android.widget.*;
 import android.content.*;
 import android.util.Log;
+import android.os.Handler;
+import android.os.*;
 
 public class BTConnector {
     static String TAG = "BTConnector";
@@ -14,12 +16,14 @@ public class BTConnector {
 	BluetoothDevice device;
 	BluetoothSocket socket;
 	Context context;
+	Handler handler;
 	
 	static UUID SPP_UUID = UUID.fromString(
 		"00001101-0000-1000-8000-00805F9B34FB");
 		
-	public BTConnector(Context context) {
+	public BTConnector(Context context, Handler handler) {
 		this.context = context;
+		this.handler = handler;
 	}
 	
 	public boolean init(){
@@ -58,5 +62,10 @@ public class BTConnector {
 			Toast.makeText(context, "Not connected", 
 					Toast.LENGTH_LONG);
 		}
+		fake(Integer.toHexString(b));
+	}
+	
+	private void fake(String s) {
+		handler.sendMessage(Message.obtain(handler, 0, s));
 	}
 }

@@ -5,21 +5,29 @@ import android.os.*;
 import android.view.*;
 import android.widget.*;
 
-public class MainActivity extends Activity
-{
+public class MainActivity extends Activity {
+
+	TextView stext;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+		
+		SerialDisplay sdisp = new SerialDisplay();
         
-        final BTConnector connector = new BTConnector(this);
+        final BTConnector connector = new BTConnector(this,
+		sdisp);
+		
         if (connector.init())
             connector.connect();
         else
             Toast.makeText(this, "Unable to find the other party", 
                            Toast.LENGTH_LONG).show();
         
+		stext = (TextView)findViewById(R.id.s_text);
+		
 		Button b = (Button)findViewById(R.id.btn_f);
 		
         // setup button listeners
@@ -58,4 +66,13 @@ public class MainActivity extends Activity
         });
         
     }
+	
+	class SerialDisplay extends Handler {
+		
+	    public void handleMessage(Message message) 	{			
+			stext.append((String)message.obj);
+			stext.invalidate();
+		}
+		
+	}
 }

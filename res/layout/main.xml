@@ -44,6 +44,7 @@
 		android:layout_toRightOf="@+id/btn_s"
 		android:text="  &gt;  "/>
     <TextView
+		android:id="@+id/s_text"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:layout_below="@+id/btn_b"
