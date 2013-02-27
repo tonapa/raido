@@ -94,13 +94,18 @@ public class BTConnector {
 
             reading = true;
             while(reading) {
-                int available;
+				Log.e(TAG1, "+++ running");
+                int available = 0;
 				try {
 					available = in.available();
 				} catch (IOException e) {
-					// ignore, TODO	
+					// ignore, TODO	AG1
 				}
-                    
+                if (available >0) {
+					byte[] buf = read();
+					handler.sendMessage(Message.obtain(handler,0,
+					                    new String(buf, 0, buf.length)));
+				}
                 try {
                     notify();
                     wait(300);
