@@ -17,6 +17,7 @@ public class BTConnector {
 	BluetoothSocket socket;
 	Context context;
 	Handler handler;
+    DeviceReader dreader;
 	
 	static UUID SPP_UUID = UUID.fromString(
 		"00001101-0000-1000-8000-00805F9B34FB");
@@ -49,6 +50,8 @@ public class BTConnector {
 			Log.e(TAG, "Error connecting to robot");
 			return false;
 		}
+        dreader = new DeviceReader();
+        dreader.start();
 		return true;
 	}
 	
@@ -62,7 +65,6 @@ public class BTConnector {
 			Toast.makeText(context, "Not connected", 
 					Toast.LENGTH_LONG);
 		}
-		fake(Integer.toHexString(b));
 	}
 	
 	private void fake(String s) {
@@ -93,6 +95,11 @@ public class BTConnector {
             reading = true;
             while(reading) {
                 int available = in.available();
+                if (available > 0) {
+                    byte[] buf = read();
+		            handler.sendMessage(Message.obtain(handler, 0, 
+                       new String(buf, 0, buf.lenght)));
+                }
                     
                 try {
                     notify();
