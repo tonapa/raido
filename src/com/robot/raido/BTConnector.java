@@ -72,7 +72,7 @@ public class BTConnector {
 	}
 
     private class DeviceReader extends Thread {
-        private static String TAG1 = "DeviceReader";
+        private String TAG1 = "DeviceReader";
         private boolean reading = false;
         private BufferedInputStream in = null;
         
@@ -82,8 +82,8 @@ public class BTConnector {
             try {
                 in = new BufferedInputStream(socket.getInputStream());
             } catch (IOException e) {
-                Toast.makeToast(context, "Unable to read from device", 
-                      Toast.LENGTH_LONG);
+                Toast.makeText(context, "Unable to read from device", 
+                      Toast.LENGTH_LONG).show();
                 Log.e(TAG1, "Unable to get InputStream");
                 return;
             }
@@ -94,12 +94,12 @@ public class BTConnector {
 
             reading = true;
             while(reading) {
-                int available = in.available();
-                if (available > 0) {
-                    byte[] buf = read();
-		            handler.sendMessage(Message.obtain(handler, 0, 
-                       new String(buf, 0, buf.lenght)));
-                }
+                int available;
+				try {
+					available = in.available();
+				} catch (IOException e) {
+					// ignore, TODO	
+				}
                     
                 try {
                     notify();
@@ -111,7 +111,7 @@ public class BTConnector {
             Log.w(TAG1, "ran out");
         }
 
-        synchronized public void stop() {
+        synchronized public void stop1() {
             reading = false;
         }
 
@@ -120,11 +120,11 @@ public class BTConnector {
         }
 
         synchronized public byte[] read() {
-            int a = in.available();
-            byte[] buf = new byte[a];
-            
-            try {
-                in.read(buf, 0, a);
+            byte[] buf;
+            try {				
+                int a = in.available();
+				buf = new byte[a];
+				in.read(buf, 0, a);
             } catch (IOException e) {
                 Log.e(TAG1, "IOException while reading from stream");
                 return null;
