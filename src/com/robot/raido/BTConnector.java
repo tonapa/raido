@@ -10,7 +10,7 @@ import android.os.*;
 
 public class BTConnector {
     static String TAG = "BTConnector";
-	static String BTNAME = "Nexus";
+	static String BTNAME = "RaidoBT";
 	
     BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
 	BluetoothDevice device;
@@ -75,6 +75,7 @@ public class BTConnector {
         private String TAG1 = "DeviceReader";
         private boolean reading = false;
         private BufferedInputStream in = null;
+		private boolean ready = false;
         
         private int available = 0;
 
@@ -94,14 +95,13 @@ public class BTConnector {
 
             reading = true;
             while(reading) {
-				Log.e(TAG1, "+++ running");
-                int available = 0;
+                
 				try {
 					available = in.available();
 				} catch (IOException e) {
 					// ignore, TODO	AG1
 				}
-                if (available >0) {
+                if (available > 0) {
 					byte[] buf = read();
 					handler.sendMessage(Message.obtain(handler,0,
 					                    new String(buf, 0, buf.length)));
@@ -127,9 +127,8 @@ public class BTConnector {
         synchronized public byte[] read() {
             byte[] buf;
             try {				
-                int a = in.available();
-				buf = new byte[a];
-				in.read(buf, 0, a);
+			    buf = new byte[in.available()];
+        		in.read(buf, 0, buf.length);
             } catch (IOException e) {
                 Log.e(TAG1, "IOException while reading from stream");
                 return null;
